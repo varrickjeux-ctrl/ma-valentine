@@ -3,188 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Une petite question...</title>
+    <title>Be My Valentine?</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Creepster&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Creepster&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-pink: #ff4d6d;
-            --dark-red: #800000;
+            --pink: #ff4d6d;
+            --hot-pink: #ff0054;
+            --devil: #660708;
         }
 
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: radial-gradient(circle, #fff0f3 0%, #ffccd5 100%);
-            overflow: hidden;
-            font-family: 'Dancing Script', cursive;
-            transition: background 1s ease;
-        }
-
-        #main-card {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 3rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            text-align: center;
-            z-index: 10;
-            backdrop-filter: blur(5px);
-            border: 2px solid white;
-            max-width: 400px;
-        }
-
-        h1 {
-            color: var(--primary-pink);
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            transition: all 0.5s;
-        }
-
-        .btn-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            height: 100px;
-            align-items: center;
-        }
-
-        button {
-            padding: 15px 30px;
-            font-size: 1.5rem;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            font-family: 'Dancing Script', cursive;
-        }
-
-        #yesBtn {
-            background-color: var(--primary-pink);
-            color: white;
-            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
-        }
-
-        #noBtn {
-            background-color: #6c757d;
-            color: white;
-            position: absolute;
-            z-index: 1000;
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; font-family: 'Poppins', sans-serif;
+            background: linear-gradient(180deg, #fff0f3 0%, #ffccd5 100%);
+            display: flex; justify-content: center; align-items: center;
+            transition: background 0.8s ease-in-out;
         }
 
         /* Pétales */
         .petal {
-            position: absolute;
-            background-color: #ff4d6d;
+            position: fixed; top: -50px;
+            background: var(--pink);
             border-radius: 150% 0 150% 0;
-            opacity: 0.7;
-            pointer-events: none;
-            animation: fall linear infinite;
+            opacity: 0.6; pointer-events: none;
+            z-index: 1;
         }
 
-        @keyframes fall {
-            0% { transform: translateY(-10vh) rotate(0deg); }
-            100% { transform: translateY(110vh) rotate(360deg); }
+        #container {
+            position: relative; z-index: 10;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px; border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(255, 77, 109, 0.2);
+            text-align: center; border: 3px solid white;
+            max-width: 450px; width: 90%;
+            transition: transform 0.3s;
         }
 
-        /* Mode Diabolique */
-        .hell-mode {
-            background: #000 !important;
-            color: white !important;
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem; color: var(--hot-pink); margin-bottom: 30px;
         }
 
-        .hell-text {
-            font-family: 'Creepster', cursive !important;
-            color: var(--dark-red) !important;
-            font-size: 4rem !important;
-            text-shadow: 0 0 20px red;
+        .buttons {
+            display: flex; justify-content: center;
+            align-items: center; gap: 40px; min-height: 150px;
         }
 
-        #devil-msg {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            z-index: 2000;
+        button {
+            padding: 15px 35px; font-size: 1.4rem; font-weight: 600;
+            border: none; border-radius: 50px; cursor: pointer;
+            transition: all 0.2s ease; font-family: 'Poppins', sans-serif;
+        }
+
+        #yesBtn {
+            background: var(--pink); color: white;
+            box-shadow: 0 8px 20px rgba(255, 77, 109, 0.3);
+            z-index: 5;
+        }
+
+        #noBtn {
+            background: #adb5bd; color: white;
+            position: fixed; /* Détaché du flux pour ne pas chevaucher */
+            z-index: 1000;
+            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Final Diabolique */
+        .hell-bg { background: #050505 !important; }
+        .hell-title { 
+            font-family: 'Creepster', cursive !important; 
+            color: #ff0000 !important; font-size: 5rem !important;
+            text-shadow: 0 0 30px #ff0000;
+        }
+        #pacte {
+            display: none; flex-direction: column; align-items: center;
+            color: white; z-index: 2000; text-align: center;
         }
     </style>
 </head>
 <body>
 
-    <div id="main-card">
-        <h1 id="question">Veux-tu être ma Valentine ?</h1>
-        <div class="btn-container">
+    <div id="container">
+        <h1 id="questionText">Veux-tu être ma Valentine ?</h1>
+        <div class="buttons">
             <button id="yesBtn">OUI !</button>
             <button id="noBtn">Non</button>
         </div>
     </div>
 
-    <div id="devil-msg">
-        <h1 class="hell-text">C'EST SIGNÉ !</h1>
-        <p style="font-size: 1.5rem; color: #ff0000;">Tu as conclu un pacte éternel avec le Diable...</p>
-        <p style="font-size: 1rem;">(Et accessoirement, on se voit le 14 ?)</p>
-        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJmZzR6NHJmZzR6NHJmZzR6NHJmZzR6NHJmZzR6NHJmZzR6JnB0X3JlZCUzRDEmc3Q9Zw/yr7n0u3qzJC8mOnXyS/giphy.gif" width="200">
+    <div id="pacte">
+        <h1 class="hell-title">PACTE SCELLÉ</h1>
+        <p style="font-size: 1.5rem;">Aucun retour en arrière possible...</p>
+        <img src="https://media.giphy.com/media/77f2Z2cHX3609YUpTM/giphy.gif" width="300" style="margin-top:20px; border-radius:15px;">
+        <p style="margin-top:20px; color: #666;">Tu as signé avec ton sang.</p>
     </div>
 
     <script>
         const noBtn = document.getElementById('noBtn');
         const yesBtn = document.getElementById('yesBtn');
-        const card = document.getElementById('main-card');
-        const devilMsg = document.getElementById('devil-msg');
-        let yesScale = 1;
+        const container = document.getElementById('container');
+        const pacte = document.getElementById('pacte');
+        let scaleYes = 1;
 
-        // Animation des pétales
+        // --- Pluie de pétales depuis le haut ---
         function createPetal() {
-            const petal = document.createElement('div');
-            petal.classList.add('petal');
-            petal.style.left = Math.random() * 100 + 'vw';
-            petal.style.width = Math.random() * 15 + 10 + 'px';
-            petal.style.height = petal.style.width;
-            petal.style.animationDuration = Math.random() * 3 + 2 + 's';
-            document.body.appendChild(petal);
-            setTimeout(() => petal.remove(), 5000);
-        }
-        setInterval(createPetal, 200);
-
-        // Le bouton "Non" qui fuit
-        noBtn.addEventListener('mouseover', () => {
-            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-            noBtn.style.left = x + 'px';
-            noBtn.style.top = y + 'px';
+            const p = document.createElement('div');
+            p.className = 'petal';
+            const size = Math.random() * 15 + 10;
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.left = Math.random() * 100 + 'vw';
             
-            // Le bouton "Oui" devient irrésistible
-            yesScale += 0.2;
-            yesBtn.style.transform = `scale(${yesScale})`;
-        });
+            const duration = Math.random() * 3 + 4;
+            p.animate([
+                { transform: `translateY(0) rotate(0deg)`, opacity: 0.6 },
+                { transform: `translateY(110vh) rotate(720deg)`, opacity: 0 }
+            ], { duration: duration * 1000, easing: 'linear' });
 
-        // Le grand final
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), duration * 1000);
+        }
+        setInterval(createPetal, 150);
+
+        // --- Logique du bouton "Non" Maléfique ---
+        function moveNoButton() {
+            // Calculer une position aléatoire qui reste dans la fenêtre
+            const padding = 50;
+            const newX = Math.random() * (window.innerWidth - noBtn.clientWidth - padding);
+            const newY = Math.random() * (window.innerHeight - noBtn.clientHeight - padding);
+            
+            // Effets visuels aléatoires
+            const randomRotate = (Math.random() - 0.5) * 40; // Rotation
+            const randomSkew = (Math.random() - 0.5) * 20;   // Déformation
+            const colors = ['#6c757d', '#495057', '#343a40', '#ff0000', '#212529'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+            noBtn.style.left = `${newX}px`;
+            noBtn.style.top = `${newY}px`;
+            noBtn.style.transform = `rotate(${randomRotate}deg) skew(${randomSkew}deg) scale(${0.8 + Math.random()})`;
+            noBtn.style.backgroundColor = randomColor;
+
+            // Faire grossir le bouton OUI à chaque tentative de cliquer sur NON
+            scaleYes += 0.15;
+            yesBtn.style.transform = `scale(${scaleYes})`;
+        }
+
+        // Se déclenche au survol ET au toucher (mobile)
+        noBtn.addEventListener('mouseenter', moveNoButton);
+        noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNoButton(); });
+
+        // --- Action Finale ---
         yesBtn.addEventListener('click', () => {
-            // Explosion de confettis
+            // Stop les pétales roses
+            const petals = document.querySelectorAll('.petal');
+            petals.forEach(p => p.style.display = 'none');
+
+            // Explosion confettis
             confetti({
-                particleCount: 150,
-                spread: 70,
+                particleCount: 200,
+                spread: 90,
                 origin: { y: 0.6 },
-                colors: ['#ff4d6d', '#ff0000', '#800000']
+                colors: ['#ff0000', '#000000', '#800000']
             });
 
+            // Transition vers l'enfer
             setTimeout(() => {
-                document.body.classList.add('hell-mode');
-                card.style.display = 'none';
-                devilMsg.style.display = 'block';
+                document.body.classList.add('hell-bg');
+                container.style.display = 'none';
+                noBtn.style.display = 'none';
+                pacte.style.display = 'flex';
                 
-                // On change la pluie en rouge sang
-                document.querySelectorAll('.petal').forEach(p => p.style.backgroundColor = 'red');
-                
-                // Son diabolique (optionnel si tu veux ajouter un lien audio)
-                console.log("Pacte signé avec le sang.");
-            }, 1000);
+                // Pluie de sang
+                setInterval(() => {
+                    const drop = document.createElement('div');
+                    drop.className = 'petal';
+                    drop.style.backgroundColor = 'red';
+                    drop.style.left = Math.random() * 100 + 'vw';
+                    document.body.appendChild(drop);
+                    drop.animate([{transform: 'translateY(0)'}, {transform: 'translateY(110vh)'}], 2000);
+                }, 50);
+            }, 600);
         });
+
+        // Position initiale du bouton non pour éviter le chevauchement au départ
+        window.onload = () => {
+            const rect = yesBtn.getBoundingClientRect();
+            noBtn.style.left = (rect.right + 50) + 'px';
+            noBtn.style.top = rect.top + 'px';
+        };
     </script>
 </body>
 </html>
