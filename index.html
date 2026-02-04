@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Une petite question...</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Creepster&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-pink: #ff4d6d;
+            --dark-red: #800000;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, #fff0f3 0%, #ffccd5 100%);
+            overflow: hidden;
+            font-family: 'Dancing Script', cursive;
+            transition: background 1s ease;
+        }
+
+        #main-card {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            z-index: 10;
+            backdrop-filter: blur(5px);
+            border: 2px solid white;
+            max-width: 400px;
+        }
+
+        h1 {
+            color: var(--primary-pink);
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            transition: all 0.5s;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            height: 100px;
+            align-items: center;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-family: 'Dancing Script', cursive;
+        }
+
+        #yesBtn {
+            background-color: var(--primary-pink);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+        }
+
+        #noBtn {
+            background-color: #6c757d;
+            color: white;
+            position: absolute;
+            z-index: 1000;
+        }
+
+        /* Pétales */
+        .petal {
+            position: absolute;
+            background-color: #ff4d6d;
+            border-radius: 150% 0 150% 0;
+            opacity: 0.7;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); }
+            100% { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        /* Mode Diabolique */
+        .hell-mode {
+            background: #000 !important;
+            color: white !important;
+        }
+
+        .hell-text {
+            font-family: 'Creepster', cursive !important;
+            color: var(--dark-red) !important;
+            font-size: 4rem !important;
+            text-shadow: 0 0 20px red;
+        }
+
+        #devil-msg {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 2000;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="main-card">
+        <h1 id="question">Veux-tu être ma Valentine ?</h1>
+        <div class="btn-container">
+            <button id="yesBtn">OUI !</button>
+            <button id="noBtn">Non</button>
+        </div>
+    </div>
+
+    <div id="devil-msg">
+        <h1 class="hell-text">C'EST SIGNÉ !</h1>
+        <p style="font-size: 1.5rem; color: #ff0000;">Tu as conclu un pacte éternel avec le Diable...</p>
+        <p style="font-size: 1rem;">(Et accessoirement, on se voit le 14 ?)</p>
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJmZzR6NHJmZzR6NHJmZzR6NHJmZzR6NHJmZzR6NHJmZzR6JnB0X3JlZCUzRDEmc3Q9Zw/yr7n0u3qzJC8mOnXyS/giphy.gif" width="200">
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const card = document.getElementById('main-card');
+        const devilMsg = document.getElementById('devil-msg');
+        let yesScale = 1;
+
+        // Animation des pétales
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.classList.add('petal');
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.width = Math.random() * 15 + 10 + 'px';
+            petal.style.height = petal.style.width;
+            petal.style.animationDuration = Math.random() * 3 + 2 + 's';
+            document.body.appendChild(petal);
+            setTimeout(() => petal.remove(), 5000);
+        }
+        setInterval(createPetal, 200);
+
+        // Le bouton "Non" qui fuit
+        noBtn.addEventListener('mouseover', () => {
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+            
+            // Le bouton "Oui" devient irrésistible
+            yesScale += 0.2;
+            yesBtn.style.transform = `scale(${yesScale})`;
+        });
+
+        // Le grand final
+        yesBtn.addEventListener('click', () => {
+            // Explosion de confettis
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ff4d6d', '#ff0000', '#800000']
+            });
+
+            setTimeout(() => {
+                document.body.classList.add('hell-mode');
+                card.style.display = 'none';
+                devilMsg.style.display = 'block';
+                
+                // On change la pluie en rouge sang
+                document.querySelectorAll('.petal').forEach(p => p.style.backgroundColor = 'red');
+                
+                // Son diabolique (optionnel si tu veux ajouter un lien audio)
+                console.log("Pacte signé avec le sang.");
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
