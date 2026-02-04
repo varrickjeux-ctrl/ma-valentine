@@ -3,40 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REPONDS-MOI !</title>
+    <title>Réponds-moi vite !</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Creepster&family=Poppins:wght@900&display=swap" rel="stylesheet">
     <style>
         :root { --pink: #ff4d6d; --blood: #b30000; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Poppins', sans-serif; background: #fff0f3; display: flex; justify-content: center; align-items: center; }
+        
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            overflow: hidden; font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%); 
+            display: flex; justify-content: center; align-items: center; 
+        }
 
         /* Pétales & Sang */
         .drop { position: fixed; top: -50px; pointer-events: none; z-index: 1; }
         .petal { background: var(--pink); border-radius: 150% 0 150% 0; }
-        .blood { background: var(--blood); width: 4px !important; border-radius: 0 0 50% 50%; }
+        .blood { background: var(--blood); width: 5px !important; border-radius: 0 0 50% 50%; box-shadow: 0 0 5px red; }
 
-        #container { position: relative; z-index: 10; background: white; padding: 40px; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); text-align: center; transition: all 0.2s; }
+        /* Design Encart Glassmorphism */
+        #container { 
+            position: relative; z-index: 100; 
+            background: rgba(255, 255, 255, 0.4); 
+            padding: 50px; border-radius: 40px; 
+            backdrop-filter: blur(15px);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.1); 
+            text-align: center; border: 2px solid rgba(255,255,255,0.5);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 80vw;
+        }
         
-        h1 { font-family: 'Dancing Script', cursive; font-size: 3rem; color: var(--pink); }
+        h1 { font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: var(--pink); text-shadow: 2px 2px 0px white; margin: 0; }
         
         #noBtn { 
-            position: fixed; z-index: 1000; padding: 15px 30px; border-radius: 50px; 
-            background: #6c757d; color: white; border: none; cursor: pointer;
-            transition: all 0.1s cubic-bezier(0.19, 1, 0.22, 1);
+            position: fixed; z-index: 50; padding: 15px 35px; border-radius: 50px; 
+            background: #444; color: white; border: none; cursor: pointer;
+            font-weight: bold; font-size: 1.2rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: all 0.1s ease-out;
         }
 
-        #yesBtn { padding: 20px 40px; font-size: 1.5rem; border-radius: 50px; background: var(--pink); color: white; border: none; cursor: pointer; font-weight: bold; }
+        #yesBtn { 
+            padding: 20px 40px; font-size: 1.8rem; border-radius: 50px; 
+            background: var(--pink); color: white; border: none; 
+            cursor: pointer; font-weight: 900; 
+            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.4);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-        /* Colère */
-        @keyframes shake { 0% { transform: translate(1px, 1px); } 20% { transform: translate(-3px, 0px); } 40% { transform: translate(3px, 2px); } 100% { transform: translate(1px, -1px); } }
-        .angry-mode { animation: shake 0.1s infinite; background: red !important; }
-        #rage-msg { display: none; position: fixed; top: 20%; color: white; font-size: 5rem; z-index: 2000; text-align: center; width: 100%; font-family: 'Poppins'; }
+        /* Message de Colère au premier plan */
+        #rage-msg { 
+            display: none; position: fixed; top: 0; left: 0; 
+            width: 100vw; height: 100vh;
+            background: rgba(255,0,0,0.8);
+            color: white; font-size: 5rem; z-index: 9999; 
+            display: flex; justify-content: center; align-items: center;
+            text-align: center; font-family: 'Poppins'; font-weight: 900;
+            pointer-events: none; /* Laisse passer le clic vers le bouton OUI */
+            opacity: 0; transition: opacity 0.3s;
+        }
+
+        @keyframes shake { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-5px, -2px); } 100% { transform: translate(2px, 2px); } }
+        .angry-mode { animation: shake 0.05s infinite !important; }
 
         /* Pacte Scellé */
         #pacte { display: none; flex-direction: column; align-items: center; z-index: 2000; color: white; text-align: center; }
-        .devil-face { font-size: 100px; animation: laugh 0.5s infinite alternate; }
-        @keyframes laugh { from { transform: scale(1); } to { transform: scale(1.3) rotate(10deg); } }
-        .hell-title { font-family: 'Creepster', cursive; font-size: 6rem; color: var(--blood); text-shadow: 0 0 20px black; }
+        .devil-face { font-size: 120px; animation: laugh 0.4s infinite alternate; }
+        @keyframes laugh { from { transform: scale(1) rotate(-5deg); } to { transform: scale(1.3) rotate(5deg); } }
+        .hell-title { font-family: 'Creepster', cursive; font-size: clamp(4rem, 10vw, 8rem); color: var(--blood); text-shadow: 0 0 30px #ff0000; margin: 0; }
     </style>
 </head>
 <body>
@@ -45,7 +79,7 @@
 
     <div id="container">
         <h1 id="mainTitle">Veux-tu être ma Valentine ?</h1>
-        <div style="margin-top: 50px; display: flex; justify-content: center; gap: 50px;">
+        <div style="margin-top: 60px; display: flex; justify-content: center; align-items: center; min-height: 100px;">
             <button id="yesBtn">OUI !</button>
             <button id="noBtn">Non</button>
         </div>
@@ -54,8 +88,8 @@
     <div id="pacte">
         <div class="devil-face">😈</div>
         <h1 class="hell-title">PACTE SCELLÉ</h1>
-        <p style="font-size: 2rem;">MOUHAHAHAHAHA !</p>
-        <p>Tu as signé avec ton sang, à jamais mienne.</p>
+        <p style="font-size: 2.2rem; color: #ff4d4d;">MOUHAHAHAHAHA !</p>
+        <p style="letter-spacing: 2px;">TU M'APPARTIENS DÉSORMAIS.</p>
     </div>
 
     <script>
@@ -64,16 +98,16 @@
         const container = document.getElementById('container');
         const rageMsg = document.getElementById('rage-msg');
         const pacte = document.getElementById('pacte');
+        const mainTitle = document.getElementById('mainTitle');
+        
         let attempts = 0;
-        let isHell = false;
 
-        // --- Pluie de base ---
         function spawnDrop(type) {
             const d = document.createElement('div');
             d.className = `drop ${type}`;
-            const size = type === 'petal' ? Math.random() * 15 + 10 : Math.random() * 20 + 10;
+            const size = type === 'petal' ? Math.random() * 15 + 10 : Math.random() * 25 + 10;
             d.style.width = size + 'px';
-            d.style.height = (type === 'petal' ? size : size * 2) + 'px';
+            d.style.height = (type === 'petal' ? size : size * 3) + 'px';
             d.style.left = Math.random() * 100 + 'vw';
             document.body.appendChild(d);
             
@@ -81,55 +115,73 @@
                 { transform: 'translateY(0) rotate(0deg)', opacity: 0.8 },
                 { transform: `translateY(110vh) rotate(${type === 'petal' ? 360 : 0}deg)`, opacity: 0 }
             ], { duration: Math.random() * 2000 + 2000 });
-
             anim.onfinish = () => d.remove();
         }
+
         let rainInterval = setInterval(() => spawnDrop('petal'), 200);
 
-        // --- Le bouton Non fuyant ---
-        const moveNo = (e) => {
+        const moveNo = () => {
             if (attempts >= 20) return;
             
             attempts++;
-            const x = Math.random() * (window.innerWidth - 150);
-            const y = Math.random() * (window.innerHeight - 100);
             
-            noBtn.style.left = x + 'px';
-            noBtn.style.top = y + 'px';
-            noBtn.style.transform = `scale(${1 - attempts/25}) rotate(${attempts * 10}deg)`;
+            // Calculer position pour éviter le bouton OUI
+            const yesRect = yesBtn.getBoundingClientRect();
+            let newX, newY;
             
-            yesBtn.style.transform = `scale(${1 + attempts/5})`;
+            do {
+                newX = Math.random() * (window.innerWidth - 150);
+                newY = Math.random() * (window.innerHeight - 100);
+            } while ( // Vérifie si la nouvelle position chevauche le bouton OUI
+                newX < yesRect.right + 50 && 
+                newX + 150 > yesRect.left - 50 && 
+                newY < yesRect.bottom + 50 && 
+                newY + 100 > yesRect.top - 50
+            );
+            
+            noBtn.style.left = newX + 'px';
+            noBtn.style.top = newY + 'px';
+            
+            // Feedback visuel du bouton Non
+            noBtn.style.transform = `scale(${1 - attempts/30}) rotate(${attempts * 15}deg)`;
+            noBtn.style.backgroundColor = `rgb(${68 + attempts*8}, 68, 68)`;
+            
+            // Progression du bouton Oui et de l'encart
+            const scaleFactor = 1 + (attempts * 0.15);
+            yesBtn.style.transform = `scale(${scaleFactor})`;
+            container.style.transform = `scale(${1 + (attempts * 0.05)})`;
 
+            // Phase de Colère
             if (attempts === 20) {
                 document.body.classList.add('angry-mode');
-                rageMsg.style.display = 'block';
+                rageMsg.style.display = 'flex';
+                rageMsg.style.opacity = '1';
                 noBtn.style.display = 'none';
-                document.getElementById('mainTitle').innerText = "CLIQUE SUR OUI MAINTENANT.";
+                mainTitle.innerText = "CLIQUE SUR OUI.";
+                mainTitle.style.color = "white";
+                container.style.background = "rgba(0,0,0,0.8)";
             }
         };
 
-        noBtn.addEventListener('mouseover', moveNo);
+        noBtn.addEventListener('mouseenter', moveNo);
         noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNo(); });
 
-        // --- Final ---
         yesBtn.addEventListener('click', () => {
-            isHell = true;
             clearInterval(rainInterval);
             document.body.classList.remove('angry-mode');
-            document.body.style.background = 'black';
+            document.body.style.background = '#050000';
             container.style.display = 'none';
             rageMsg.style.display = 'none';
             pacte.style.display = 'flex';
 
-            confetti({ particleCount: 300, spread: 100, colors: ['#ff0000', '#000000'] });
+            confetti({ particleCount: 400, spread: 150, origin: {y: 0.6}, colors: ['#ff0000', '#000000', '#4a0000'] });
 
             // Pluie de sang intense
-            setInterval(() => spawnDrop('blood'), 50);
+            setInterval(() => spawnDrop('blood'), 40);
         });
 
-        // Position initiale
         window.onload = () => {
-            noBtn.style.left = (window.innerWidth / 2 + 100) + 'px';
+            noBtn.style.left = (window.innerWidth / 2 + 120) + 'px';
             noBtn.style.top = (window.innerHeight / 2) + 'px';
         };
     </script>
