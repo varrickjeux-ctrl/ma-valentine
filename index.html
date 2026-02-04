@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Réponds-moi vite !</title>
+    <title>Réponds-moi !</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Creepster&family=Poppins:wght@900&display=swap" rel="stylesheet">
     <style>
@@ -15,21 +15,22 @@
         .blood { background: var(--blood); width: 5px !important; border-radius: 0 0 50% 50%; box-shadow: 0 0 5px red; }
         
         #container { position: relative; z-index: 100; background: rgba(255, 255, 255, 0.4); padding: 40px; border-radius: 40px; backdrop-filter: blur(15px); box-shadow: 0 25px 45px rgba(0,0,0,0.1); text-align: center; border: 2px solid rgba(255,255,255,0.5); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-width: 85vw; }
-        
         h1 { font-family: 'Dancing Script', cursive; font-size: clamp(2rem, 8vw, 3.5rem); color: var(--pink); margin: 0; }
         
+        #yesBtn { padding: 15px 35px; font-size: 1.6rem; border-radius: 50px; background: var(--pink); color: white; border: none; cursor: pointer; font-weight: 900; box-shadow: 0 10px 25px rgba(255, 77, 109, 0.4); transition: transform 0.2s; }
+        
+        /* Le bouton NON est maintenant géré différemment */
         #noBtn { 
             position: fixed; z-index: 500; padding: 12px 25px; border-radius: 50px; 
             background: #444; color: white; border: none; cursor: pointer; 
             font-weight: bold; font-size: 1.1rem; box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
-            transition: all 0.1s ease-out; white-space: nowrap; touch-action: none;
-            left: 50%; top: 70%; transform: translate(-50%, -50%);
+            transition: top 0.15s ease, left 0.15s ease, transform 0.15s ease;
+            white-space: nowrap; touch-action: none;
+            /* Position initiale sécurisée */
+            left: 50%; top: 80%;
         }
         
-        #yesBtn { padding: 15px 35px; font-size: 1.6rem; border-radius: 50px; background: var(--pink); color: white; border: none; cursor: pointer; font-weight: 900; box-shadow: 0 10px 25px rgba(255, 77, 109, 0.4); transition: transform 0.2s; }
-        
         #rage-msg { display: none; position: fixed; inset: 0; background: rgba(200, 0, 0, 0.9); color: white; font-size: clamp(2rem, 10vw, 5rem); z-index: 9999; justify-content: center; align-items: center; text-align: center; font-weight: 900; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
-        
         @keyframes shake { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-5px, -2px); } 100% { transform: translate(2px, 2px); } }
         .angry-mode { animation: shake 0.05s infinite !important; }
         
@@ -66,6 +67,7 @@
         let attempts = 0;
         const MAX_ATTEMPTS = 10;
 
+        // Animation des gouttes/pétales
         function spawnDrop(type) {
             const d = document.createElement('div');
             d.className = `drop ${type}`;
@@ -77,32 +79,30 @@
             const anim = d.animate([{ transform: 'translateY(0)', opacity: 0.8 }, { transform: 'translateY(110vh)', opacity: 0 }], { duration: 3000 });
             anim.onfinish = () => d.remove();
         }
-
         let rainInterval = setInterval(() => spawnDrop('petal'), 200);
 
         const moveNo = () => {
             if (attempts >= MAX_ATTEMPTS) return;
             attempts++;
             
-            // On calcule les dimensions de la fenêtre à l'instant T
-            const winW = window.innerWidth;
-            const winH = window.innerHeight;
-            
-            // On définit une marge de sécurité de 60px pour éviter les bords
-            const margin = 60;
-            
-            // Calcul d'une position aléatoire brute
-            const newX = Math.random() * (winW - margin * 2) + margin;
-            const newY = Math.random() * (winH - margin * 2) + margin;
+            // MÉTHODE RADICALE : On définit des limites strictes basées sur la taille de la fenêtre
+            // On laisse une marge de 100px tout autour pour être SÛR qu'il ne sorte pas
+            const margin = 100;
+            const maxWidth = window.innerWidth - margin;
+            const maxHeight = window.innerHeight - margin;
 
-            // On applique la position
-            noBtn.style.left = `${newX}px`;
-            noBtn.style.top = `${newY}px`;
+            // Calcul de la position (entre 'margin' et 'maxWidth/Height')
+            const randomX = Math.floor(Math.random() * (maxWidth - margin)) + margin;
+            const randomY = Math.floor(Math.random() * (maxHeight - margin)) + margin;
+
+            // Application directe sans translate (pour éviter les bugs de calcul)
+            noBtn.style.left = randomX + "px";
+            noBtn.style.top = randomY + "px";
             
-            // Animation de déformation et réduction
-            noBtn.style.transform = `translate(-50%, -50%) scale(${1 - attempts/15}) rotate(${attempts * 30}deg)`;
+            // On garde les effets de style
+            noBtn.style.transform = `rotate(${attempts * 45}deg) scale(${1 - attempts/15})`;
             
-            // Le bouton OUI et l'encart grossissent
+            // Croissance du reste
             yesBtn.style.transform = `scale(${1 + attempts/4})`;
             container.style.transform = `scale(${1 + (attempts * 0.05)})`;
 
@@ -117,7 +117,7 @@
             }
         };
 
-        noBtn.addEventListener('mouseenter', moveNo);
+        noBtn.addEventListener('mouseover', moveNo);
         noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNo(); });
 
         yesBtn.addEventListener('click', () => {
