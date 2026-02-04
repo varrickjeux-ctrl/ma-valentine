@@ -29,18 +29,19 @@
             backdrop-filter: blur(15px);
             box-shadow: 0 25px 45px rgba(0,0,0,0.1); 
             text-align: center; border: 2px solid rgba(255,255,255,0.5);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             max-width: 80vw;
         }
         
         h1 { font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: var(--pink); text-shadow: 2px 2px 0px white; margin: 0; }
         
         #noBtn { 
-            position: fixed; z-index: 50; padding: 15px 35px; border-radius: 50px; 
+            position: fixed; z-index: 500; padding: 15px 35px; border-radius: 50px; 
             background: #444; color: white; border: none; cursor: pointer;
             font-weight: bold; font-size: 1.2rem;
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
             transition: all 0.1s ease-out;
+            white-space: nowrap;
         }
 
         #yesBtn { 
@@ -51,16 +52,15 @@
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* Message de Colère au premier plan */
+        /* Message de Colère */
         #rage-msg { 
             display: none; position: fixed; top: 0; left: 0; 
             width: 100vw; height: 100vh;
-            background: rgba(255,0,0,0.8);
-            color: white; font-size: 5rem; z-index: 9999; 
+            background: rgba(200, 0, 0, 0.9);
+            color: white; font-size: clamp(2rem, 8vw, 5rem); z-index: 9999; 
             display: flex; justify-content: center; align-items: center;
             text-align: center; font-family: 'Poppins'; font-weight: 900;
-            pointer-events: none; /* Laisse passer le clic vers le bouton OUI */
-            opacity: 0; transition: opacity 0.3s;
+            pointer-events: none; opacity: 0; transition: opacity 0.3s;
         }
 
         @keyframes shake { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-5px, -2px); } 100% { transform: translate(2px, 2px); } }
@@ -70,7 +70,7 @@
         #pacte { display: none; flex-direction: column; align-items: center; z-index: 2000; color: white; text-align: center; }
         .devil-face { font-size: 120px; animation: laugh 0.4s infinite alternate; }
         @keyframes laugh { from { transform: scale(1) rotate(-5deg); } to { transform: scale(1.3) rotate(5deg); } }
-        .hell-title { font-family: 'Creepster', cursive; font-size: clamp(4rem, 10vw, 8rem); color: var(--blood); text-shadow: 0 0 30px #ff0000; margin: 0; }
+        .hell-title { font-family: 'Creepster', cursive; font-size: clamp(3rem, 12vw, 8rem); color: var(--blood); text-shadow: 0 0 30px #ff0000; margin: 0; }
     </style>
 </head>
 <body>
@@ -88,8 +88,8 @@
     <div id="pacte">
         <div class="devil-face">😈</div>
         <h1 class="hell-title">PACTE SCELLÉ</h1>
-        <p style="font-size: 2.2rem; color: #ff4d4d;">MOUHAHAHAHAHA !</p>
-        <p style="letter-spacing: 2px;">TU M'APPARTIENS DÉSORMAIS.</p>
+        <p style="font-size: 2.2rem; color: #ff4d4d; margin: 10px 0;">MOUHAHAHAHAHA !</p>
+        <p style="letter-spacing: 2px; font-weight: bold;">TU M'APPARTIENS DÉSORMAIS.</p>
     </div>
 
     <script>
@@ -101,6 +101,7 @@
         const mainTitle = document.getElementById('mainTitle');
         
         let attempts = 0;
+        const MAX_ATTEMPTS = 10; // Changé à 10 comme demandé
 
         function spawnDrop(type) {
             const d = document.createElement('div');
@@ -121,45 +122,50 @@
         let rainInterval = setInterval(() => spawnDrop('petal'), 200);
 
         const moveNo = () => {
-            if (attempts >= 20) return;
+            if (attempts >= MAX_ATTEMPTS) return;
             
             attempts++;
             
-            // Calculer position pour éviter le bouton OUI
             const yesRect = yesBtn.getBoundingClientRect();
-            let newX, newY;
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
             
+            let newX, newY;
+            let safetyCounter = 0;
+
+            // Boucle pour rester DANS l'écran et HORS du bouton OUI
             do {
-                newX = Math.random() * (window.innerWidth - 150);
-                newY = Math.random() * (window.innerHeight - 100);
-            } while ( // Vérifie si la nouvelle position chevauche le bouton OUI
-                newX < yesRect.right + 50 && 
-                newX + 150 > yesRect.left - 50 && 
-                newY < yesRect.bottom + 50 && 
-                newY + 100 > yesRect.top - 50
+                newX = Math.random() * (window.innerWidth - btnWidth - 40) + 20;
+                newY = Math.random() * (window.innerHeight - btnHeight - 40) + 20;
+                safetyCounter++;
+            } while (
+                safetyCounter < 100 && (
+                newX < yesRect.right + 40 && 
+                newX + btnWidth > yesRect.left - 40 && 
+                newY < yesRect.bottom + 40 && 
+                newY + btnHeight > yesRect.top - 40)
             );
             
-            noBtn.style.left = newX + 'px';
-            noBtn.style.top = newY + 'px';
+            noBtn.style.left = `${newX}px`;
+            noBtn.style.top = `${newY}px`;
             
-            // Feedback visuel du bouton Non
-            noBtn.style.transform = `scale(${1 - attempts/30}) rotate(${attempts * 15}deg)`;
-            noBtn.style.backgroundColor = `rgb(${68 + attempts*8}, 68, 68)`;
+            // Effets visuels
+            noBtn.style.transform = `scale(${1 - attempts/15}) rotate(${attempts * 20}deg)`;
             
-            // Progression du bouton Oui et de l'encart
-            const scaleFactor = 1 + (attempts * 0.15);
+            // Progression Encart et Oui
+            const scaleFactor = 1 + (attempts * 0.2);
             yesBtn.style.transform = `scale(${scaleFactor})`;
-            container.style.transform = `scale(${1 + (attempts * 0.05)})`;
+            container.style.transform = `scale(${1 + (attempts * 0.08)})`;
 
-            // Phase de Colère
-            if (attempts === 20) {
+            if (attempts >= MAX_ATTEMPTS) {
                 document.body.classList.add('angry-mode');
                 rageMsg.style.display = 'flex';
-                rageMsg.style.opacity = '1';
+                setTimeout(() => rageMsg.style.opacity = '1', 10);
                 noBtn.style.display = 'none';
-                mainTitle.innerText = "CLIQUE SUR OUI.";
+                mainTitle.innerText = "CLIQUE SUR OUI MAINTENANT.";
                 mainTitle.style.color = "white";
-                container.style.background = "rgba(0,0,0,0.8)";
+                container.style.background = "rgba(0,0,0,0.9)";
+                container.style.borderColor = "red";
             }
         };
 
@@ -180,9 +186,11 @@
             setInterval(() => spawnDrop('blood'), 40);
         });
 
+        // Position initiale propre
         window.onload = () => {
-            noBtn.style.left = (window.innerWidth / 2 + 120) + 'px';
-            noBtn.style.top = (window.innerHeight / 2) + 'px';
+            const containerRect = container.getBoundingClientRect();
+            noBtn.style.left = (containerRect.right - 100) + 'px';
+            noBtn.style.top = (containerRect.bottom + 20) + 'px';
         };
     </script>
 </body>
