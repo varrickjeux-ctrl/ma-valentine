@@ -8,60 +8,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Creepster&family=Poppins:wght@900&display=swap" rel="stylesheet">
     <style>
         :root { --pink: #ff4d6d; --blood: #b30000; }
-        
-        body, html { 
-            margin: 0; padding: 0; width: 100vw; height: 100vh; 
-            overflow: hidden; font-family: 'Poppins', sans-serif; 
-            background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%); 
-            display: flex; justify-content: center; align-items: center; 
-        }
-
+        body, html { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%); display: flex; justify-content: center; align-items: center; }
         .drop { position: fixed; top: -50px; pointer-events: none; z-index: 1; }
         .petal { background: var(--pink); border-radius: 150% 0 150% 0; }
         .blood { background: var(--blood); width: 5px !important; border-radius: 0 0 50% 50%; box-shadow: 0 0 5px red; }
-
-        #container { 
-            position: relative; z-index: 100; 
-            background: rgba(255, 255, 255, 0.4); 
-            padding: 40px; border-radius: 40px; 
-            backdrop-filter: blur(15px);
-            box-shadow: 0 25px 45px rgba(0,0,0,0.1); 
-            text-align: center; border: 2px solid rgba(255,255,255,0.5);
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            max-width: 85vw;
-        }
-        
+        #container { position: relative; z-index: 100; background: rgba(255, 255, 255, 0.4); padding: 40px; border-radius: 40px; backdrop-filter: blur(15px); box-shadow: 0 25px 45px rgba(0,0,0,0.1); text-align: center; border: 2px solid rgba(255,255,255,0.5); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-width: 85vw; }
         h1 { font-family: 'Dancing Script', cursive; font-size: clamp(2rem, 8vw, 3.5rem); color: var(--pink); margin: 0; }
-        
-        #noBtn { 
-            position: fixed; z-index: 500; padding: 12px 25px; border-radius: 50px; 
-            background: #444; color: white; border: none; cursor: pointer;
-            font-weight: bold; font-size: 1.1rem;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            transition: left 0.1s ease-out, top 0.1s ease-out, transform 0.1s;
-            white-space: nowrap; touch-action: none;
-        }
-
-        #yesBtn { 
-            padding: 15px 35px; font-size: 1.6rem; border-radius: 50px; 
-            background: var(--pink); color: white; border: none; 
-            cursor: pointer; font-weight: 900; 
-            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.4);
-            transition: transform 0.2s;
-        }
-
-        #rage-msg { 
-            display: none; position: fixed; inset: 0;
-            background: rgba(200, 0, 0, 0.9);
-            color: white; font-size: clamp(2rem, 10vw, 5rem); z-index: 9999; 
-            justify-content: center; align-items: center;
-            text-align: center; font-weight: 900;
-            pointer-events: none; opacity: 0; transition: opacity 0.3s;
-        }
-
+        #noBtn { position: fixed; z-index: 500; padding: 12px 25px; border-radius: 50px; background: #444; color: white; border: none; cursor: pointer; font-weight: bold; font-size: 1.1rem; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transition: all 0.1s ease-out; white-space: nowrap; touch-action: none; left: 60%; top: 60%; }
+        #yesBtn { padding: 15px 35px; font-size: 1.6rem; border-radius: 50px; background: var(--pink); color: white; border: none; cursor: pointer; font-weight: 900; box-shadow: 0 10px 25px rgba(255, 77, 109, 0.4); transition: transform 0.2s; }
+        #rage-msg { display: none; position: fixed; inset: 0; background: rgba(200, 0, 0, 0.9); color: white; font-size: clamp(2rem, 10vw, 5rem); z-index: 9999; justify-content: center; align-items: center; text-align: center; font-weight: 900; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
         @keyframes shake { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-5px, -2px); } 100% { transform: translate(2px, 2px); } }
         .angry-mode { animation: shake 0.05s infinite !important; }
-
         #pacte { display: none; flex-direction: column; align-items: center; z-index: 2000; color: white; text-align: center; }
         .devil-face { font-size: 100px; animation: laugh 0.4s infinite alternate; }
         @keyframes laugh { from { transform: scale(1) rotate(-5deg); } to { transform: scale(1.3) rotate(5deg); } }
@@ -69,9 +26,7 @@
     </style>
 </head>
 <body>
-
     <div id="rage-msg">TU VAS DIRE OUI OU QUOI ??</div>
-
     <div id="container">
         <h1 id="mainTitle">Veux-tu être ma Valentine ?</h1>
         <div style="margin-top: 50px; display: flex; justify-content: center; align-items: center; min-height: 120px;">
@@ -79,7 +34,6 @@
             <button id="noBtn">Non</button>
         </div>
     </div>
-
     <div id="pacte">
         <div class="devil-face">😈</div>
         <h1 class="hell-title">PACTE SCELLÉ</h1>
@@ -94,7 +48,6 @@
         const rageMsg = document.getElementById('rage-msg');
         const pacte = document.getElementById('pacte');
         const mainTitle = document.getElementById('mainTitle');
-        
         let attempts = 0;
         const MAX_ATTEMPTS = 10;
 
@@ -116,19 +69,21 @@
             if (attempts >= MAX_ATTEMPTS) return;
             attempts++;
             
-            const btnWidth = noBtn.offsetWidth;
-            const btnHeight = noBtn.offsetHeight;
-            
-            // Calcul des limites strictes du navigateur
-            const maxX = window.innerWidth - btnWidth - 20;
-            const maxY = window.innerHeight - btnHeight - 20;
-            
-            const newX = Math.max(10, Math.random() * maxX);
-            const newY = Math.max(10, Math.random() * maxY);
-            
+            // On récupère la taille actuelle avec les transformations
+            const rect = noBtn.getBoundingClientRect();
+            const w = rect.width;
+            const h = rect.height;
+
+            // Calcul des zones sécurisées (marge de 50px des bords)
+            const safeMaxX = window.innerWidth - w - 50;
+            const safeMaxY = window.innerHeight - h - 50;
+
+            const newX = Math.min(Math.max(50, Math.random() * safeMaxX), safeMaxX);
+            const newY = Math.min(Math.max(50, Math.random() * safeMaxY), safeMaxY);
+
             noBtn.style.left = `${newX}px`;
             noBtn.style.top = `${newY}px`;
-            noBtn.style.transform = `scale(${1 - attempts/15}) rotate(${attempts * 15}deg)`;
+            noBtn.style.transform = `scale(${1 - attempts/15}) rotate(${attempts * 25}deg)`;
             
             yesBtn.style.transform = `scale(${1 + attempts/5})`;
             container.style.transform = `scale(${1 + (attempts * 0.05)})`;
@@ -144,7 +99,7 @@
             }
         };
 
-        noBtn.addEventListener('mouseover', moveNo);
+        noBtn.addEventListener('mouseenter', moveNo);
         noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNo(); });
 
         yesBtn.addEventListener('click', () => {
@@ -157,12 +112,6 @@
             confetti({ particleCount: 300, spread: 100, colors: ['#ff0000', '#000000'] });
             setInterval(() => spawnDrop('blood'), 50);
         });
-
-        // Positionnement initial
-        window.onload = () => {
-            noBtn.style.left = (window.innerWidth / 2 + 80) + 'px';
-            noBtn.style.top = (window.innerHeight / 2 + 20) + 'px';
-        };
     </script>
 </body>
 </html>
